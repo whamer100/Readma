@@ -1,5 +1,5 @@
 import pytest
-from readma import Readma
+from readma import Readma, ReadmaTypes
 from math import isclose
 from struct import pack, unpack
 
@@ -10,7 +10,14 @@ def test_Readma_buffer_string():
 
 @pytest.mark.xfail
 def test_Readma_buffer_string_invalidType():
+    # to get rid of the warning, intentional exception
+    # noinspection PyTypeChecker
     Readma(69)
+
+
+@pytest.mark.xfail
+def test_Readma_buffer_string_invalidRead():
+    Readma(b"123").read(4)
 
 
 def test_Readma_buffer_fulltest():
@@ -27,6 +34,22 @@ def test_Readma_buffer_fulltest():
     _strsize = r.read(1)
     assert _strsize == 13
     assert r.bytes(_strsize) == b"Hello, World!"
+
+
+def test_Readma_buffer_fulltest_alt():
+    r = Readma("./tests/test.bin")
+    assert r.read("byte") == 42
+    assert r.read("short") == 2448
+    assert r.read("int") == 694201337
+    assert r.read("long") == 2396795999211369490
+
+
+def test_Readma_buffer_fulltest_enum():
+    r = Readma("./tests/test.bin")
+    assert r.read(ReadmaTypes.byte) == 42
+    assert r.read(ReadmaTypes.short) == 2448
+    assert r.read(ReadmaTypes.int) == 694201337
+    assert r.read(ReadmaTypes.long) == 2396795999211369490
 
 
 def test_Readma_buffer_string_endianness():

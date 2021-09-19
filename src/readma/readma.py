@@ -17,6 +17,10 @@ class ReadmaTypes(Enum):
     long = "q"
 
 
+sizeLiteral = Literal["byte", "short", "int", "long"]
+sizeType = Union[int, sizeLiteral, ReadmaTypes]
+
+
 def get_type(size: str) -> str:
     return ReadmaTypes[size].value  # python enums kinda suck
 
@@ -28,6 +32,13 @@ class Readma:
         2: "short",
         4: "int",
         8: "long"
+    }
+
+    __ts_rev = {
+        "byte": 1,
+        "short": 2,
+        "int": 4,
+        "long": 8
     }
 
     __endianness = {
@@ -49,19 +60,29 @@ class Readma:
         self.buffer = io.BytesIO(buffer)
         self.endianness = self.__endianness["little"]
 
-    def __make_fmt(self, size: Union[int, str, ReadmaTypes], signed: bool) -> str:
+    def __make_fmt(self, size: sizeType, signed: bool) -> (str, int):
         _str = ">" if self.endianness else "<"
+        _size = 0
         if type(size) == int:
             if size in self.__type_shorthand:
+                _size = size
                 _str += get_type(self.__type_shorthand[size])
+            else:
+                raise TypeError
         elif type(size) == str:
             if size in ReadmaTypes.__members__:
+                _size = self.__ts_rev[size]
                 _str += get_type(size)
+            else:
+                raise TypeError
         elif type(size) == ReadmaTypes:
+            _size = size.name
             _str += size.value
+        else:
+            raise TypeError
         if not signed:
             _str = _str.upper()
-        return _str
+        return _str, _size
 
     def set_endianness(self, endianness: Literal["little", "big"]) -> None:
         """ Sets endianness
@@ -79,21 +100,23 @@ class Readma:
         """
         return self.buffer.read(num)
 
-    def read(self, size: int) -> intType:
+    def read(self, size: sizeType) -> intType:
         """ Readma integer
 
         :param size: size of int to read
         :return: int
         """
-        return struct.unpack(self.__make_fmt(size, True), self.buffer.read(size))[0]
+        rStr, rSize = self.__make_fmt(size, True)
+        return struct.unpack(rStr, self.buffer.read(rSize))[0]
 
-    def uread(self, size: int) -> intType:
+    def uread(self, size: sizeType) -> intType:
         """ Readma unsigned integer
 
         :param size: size of uint to read
         :return: int
         """
-        return struct.unpack(self.__make_fmt(size, False), self.buffer.read(size))[0]
+        rStr, rSize = self.__make_fmt(size, False)
+        return struct.unpack(rStr, self.buffer.read(rSize))[0]
 
     def float(self) -> floatType:
         """ Readma float32
