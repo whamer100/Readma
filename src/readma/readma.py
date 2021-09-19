@@ -76,7 +76,7 @@ class Readma:
             else:
                 raise TypeError
         elif type(size) == ReadmaTypes:
-            _size = size.name
+            _size = self.__ts_rev[size.name]
             _str += size.value
         else:
             raise TypeError
