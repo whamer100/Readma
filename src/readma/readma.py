@@ -4,6 +4,10 @@ import os
 from enum import Enum
 from typing import Any, Union, Literal
 
+bytesType = bytes
+floatType = float
+intType = int
+
 
 class ReadmaTypes(Enum):
     """Various Readma types to Readma files with"""
@@ -52,9 +56,9 @@ class Readma:
                 _str += get_type(self.__type_shorthand[size])
         elif type(size) == str:
             if size in ReadmaTypes.__members__:
-                _str += ReadmaTypes[size]
+                _str += get_type(size)
         else:
-            _str += size
+            _str += size.value
         if not signed:
             _str = _str.upper()
         return _str
@@ -67,7 +71,7 @@ class Readma:
         """
         self.endianness = self.__endianness[endianness]
 
-    def bytes(self, num: int) -> bytes:
+    def bytes(self, num: int) -> bytesType:
         """ Readma bytes
 
         :param num: number of bytes to read
@@ -75,7 +79,7 @@ class Readma:
         """
         return self.buffer.read(num)
 
-    def read(self, size: int) -> int:
+    def read(self, size: int) -> intType:
         """ Readma integer
 
         :param size: size of int to read
@@ -83,7 +87,7 @@ class Readma:
         """
         return struct.unpack(self.__make_fmt(size, True), self.buffer.read(size))[0]
 
-    def uread(self, size: int) -> int:
+    def uread(self, size: int) -> intType:
         """ Readma unsigned integer
 
         :param size: size of uint to read
@@ -91,7 +95,7 @@ class Readma:
         """
         return struct.unpack(self.__make_fmt(size, False), self.buffer.read(size))[0]
 
-    def float(self) -> float:
+    def float(self) -> floatType:
         """ Readma float32
 
         :return: float
@@ -100,14 +104,14 @@ class Readma:
 
     float32 = float
 
-    def float64(self) -> float:
+    def float64(self) -> floatType:
         """ Readma float64 (also known as a double)
 
         :return: float
         """
         return struct.unpack("d", self.buffer.read(8))[0]
 
-    def readall(self) -> bytes:
+    def readall(self) -> bytesType:
         """ Readma all the bytes
 
         :return: bytes
