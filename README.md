@@ -18,6 +18,8 @@ Some large module I've been writing my entire life that will change the world wi
 
 ## Usage
 
+> Note, requires Python 3.8 or higher (For now at least)
+
 ### Installation
 
 ```sh
