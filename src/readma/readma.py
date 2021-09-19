@@ -57,7 +57,7 @@ class Readma:
         elif type(size) == str:
             if size in ReadmaTypes.__members__:
                 _str += get_type(size)
-        else:
+        elif type(size) == ReadmaTypes:
             _str += size.value
         if not signed:
             _str = _str.upper()
