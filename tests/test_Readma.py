@@ -14,7 +14,7 @@ def test_Readma_buffer_string_invalidType():
 
 
 def test_Readma_buffer_fulltest():
-    r = Readma("test.bin")
+    r = Readma("./tests/test.bin")
     assert r.read(1) == 42
     assert r.read(2) == 2448
     assert r.read(4) == 694201337
