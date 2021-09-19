@@ -2,7 +2,7 @@ import io
 import struct
 import os
 from enum import Enum
-from typing import Any, Union, Literal
+from typing import Any, Union, Literal, Tuple
 
 bytesType = bytes
 floatType = float
@@ -60,7 +60,7 @@ class Readma:
         self.buffer = io.BytesIO(buffer)
         self.endianness = self.__endianness["little"]
 
-    def __make_fmt(self, size: sizeType, signed: bool) -> (str, int):
+    def __make_fmt(self, size: sizeType, signed: bool) -> Tuple[str, int]:
         _str = ">" if self.endianness else "<"
         _size = 0
         if type(size) == int:
