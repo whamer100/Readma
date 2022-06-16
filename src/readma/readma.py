@@ -151,3 +151,25 @@ class Readma:
         :return:
         """
         self.buffer.seek(loc)
+
+    def tell(self) -> int:
+        """ Get the current position the binary
+
+        :return:
+        """
+        return self.buffer.tell()
+
+    def skip(self, amt) -> None:
+        """ Skip an amount of bytes (alias for r.seek(r.tell() + n))
+
+        :param amt: number of bytes to skip
+        :return:
+        """
+        self.buffer.seek(self.buffer.tell() + amt)
+
+    def size(self) -> int:
+        """ Get the size of the underlying buffer
+
+        :return: int size
+        """
+        return self.buffer.getbuffer().nbytes

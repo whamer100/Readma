@@ -59,3 +59,27 @@ def test_Readma_buffer_string_endianness():
     assert r.read(4) == 305419896
     r.set_endianness("little")
     assert r.read(4) == 2018915346
+
+
+def test_Readma_tell_and_seek_also_skip():
+    r = Readma(b"AAAABBBBBBBBCDDDDXXXXXXXXEEEE")
+    # various read tests
+    assert r.tell() == 0
+    r.read(4)
+    assert r.tell() == 4
+    r.read(8)
+    assert r.tell() == 12
+    # skip one byte
+    r.seek(13)
+    assert r.tell() == 13
+    assert r.read(4) == b"DDDD"
+    # go back to start of file and make sure it reads properly
+    r.seek(0)
+    assert r.tell() == 0
+    assert r.read(4) == b"AAAA"
+
+
+def test_Readma_size():
+    # shortest test in the west
+    assert Readma(b"AAAABBBBCCCCDDDD") == 16
+    assert Readma(b"") == 0

@@ -64,6 +64,30 @@ C = r.read(ReadmaTypes.int)  # someone might prefer this idk
 D = r.bytes(4)  # its a bytestring, do whatever with it
 ```
 
+You can also move around the buffer using seek, skip, and tell
+```py
+from readma import Readma
+
+r = Readma(b"AAAABBCCCCXXXXXXXXDDDD")
+
+A = r.read(4)
+r.seek(6)  # seek past B
+C = r.read(4)
+r.skip(8)  # skip past the next 8 bytes
+D = r.read(4)
+```
+
+Oh and you can check the size of the buffer too
+```py
+from readma import Readma
+
+r = Readma(b"AAAABBBBCCCCDDDD")
+
+assert r.size() == 16
+
+# observe the script not halting
+```
+
 ## Documentation
 
 ### [tba](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
