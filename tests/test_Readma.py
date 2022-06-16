@@ -72,14 +72,14 @@ def test_Readma_tell_and_seek_also_skip():
     # skip one byte
     r.seek(13)
     assert r.tell() == 13
-    assert r.read(4) == b"DDDD"
+    assert r.read(4) == 1145324612  # DDDD -> \x44\x44\x44\x44
     # go back to start of file and make sure it reads properly
     r.seek(0)
     assert r.tell() == 0
-    assert r.read(4) == b"AAAA"
+    assert r.read(4) == 1094795585  # AAAA -> \x41\x41\x41\x41
 
 
 def test_Readma_size():
     # shortest test in the west
-    assert Readma(b"AAAABBBBCCCCDDDD") == 16
-    assert Readma(b"") == 0
+    assert Readma(b"AAAABBBBCCCCDDDD").size() == 16
+    assert Readma(b"").size() == 0
