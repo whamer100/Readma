@@ -84,6 +84,9 @@ class Readma:
             _str = _str.upper()
         return _str, _size
 
+    def __endianness_fmt(self) -> str:
+        return ">" if self.endianness else "<"
+
     def set_endianness(self, endianness: Literal["little", "big"]) -> None:
         """ Sets endianness
 
@@ -123,7 +126,7 @@ class Readma:
 
         :return: float
         """
-        return struct.unpack("f", self.buffer.read(4))[0]
+        return struct.unpack(self.__endianness_fmt() + "f", self.buffer.read(4))[0]
 
     float32 = float
 
@@ -132,7 +135,7 @@ class Readma:
 
         :return: float
         """
-        return struct.unpack("d", self.buffer.read(8))[0]
+        return struct.unpack(self.__endianness_fmt() + "d", self.buffer.read(8))[0]
 
     def readall(self) -> bytesType:
         """ Readma all the bytes
